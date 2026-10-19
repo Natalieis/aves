@@ -944,7 +944,12 @@
   "settingsViewerShowInformation": "Show information",
   "settingsViewerShowInformationSubtitle": "Show title, date, location, etc.",
   "settingsViewerShowRatingTags": "Show rating & tags",
+  "settingsViewerShowPosition": "Show position",
+  "settingsViewerShowTitle": "Show title",
   "settingsViewerShowShootingDetails": "Show shooting details",
+  "settingsViewerShowFileInfo": "Show file info",
+  "settingsViewerShowFileInfoSubtitle": "Corner badge, shown even when the info overlay is hidden",
+  "settingsViewerShowBitRate": "Show bit rate",
   "settingsViewerShowDescription": "Show description",
   "settingsViewerShowOverlayThumbnails": "Show thumbnails",
   "settingsViewerEnableOverlayBlurEffect": "Blur effect",
@@ -1008,6 +1013,33 @@
   "settingsSaveSearchHistory": "Save search history",
   "settingsEnableBin": "Use recycle bin",
   "settingsEnableBinSubtitle": "Keep deleted items for 30 days",
+  "settingsAnalysisSectionTitle": "Media analysis",
+  "settingsAutoAnalyze": "Analyze media on startup",
+  "settingsAutoAnalyzeSubtitle": "Read metadata and look up place names. When off, a video is analyzed once when you first open it.",
+  "catalogImagesLabel": "Images",
+  "catalogVideosLabel": "Videos",
+  "catalogProgress": "Catalogued {catalogued} of {total} ({percent}%)",
+  "@catalogProgress": {
+    "placeholders": {
+      "catalogued": {
+        "type": "int",
+        "format": "decimalPattern"
+      },
+      "total": {
+        "type": "int",
+        "format": "decimalPattern"
+      },
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsAutoCatalog": "Catalog media on startup",
+  "settingsAutoCatalogSubtitle": "Read metadata (date, rotation, orientation…) in the background. Turn off to save time and battery: some details may be missing until you catalog manually.",
+  "settingsAutoLocate": "Locate media on startup",
+  "settingsAutoLocateSubtitle": "Resolve GPS coordinates into place names. Turn off to save time, battery and data.",
+  "settingsCatalogNow": "Catalog now",
+  "settingsCatalogNowSubtitle": "Run cataloguing once, without enabling it on every startup",
   "settingsDisablingBinWarningDialogMessage": "Items in the recycle bin will be deleted forever.",
   "settingsAllowMediaManagement": "Allow media management",
   "settingsAllowNotifications": "Allow notifications",

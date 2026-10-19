@@ -1,6 +1,7 @@
 package deckers.thibault.aves.channel.calls
 
 import android.content.Context
+import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
 import android.os.Build
@@ -1024,6 +1025,7 @@ class MetadataFetchHandler(private val context: Context) : MethodCallHandler {
         val path = call.argument<String>("path")
         val sizeBytes = call.argument<Number>("sizeBytes")?.toLong()
         val fields = call.argument<List<String>>("fields")
+        val includeFileInfo = call.argument<Boolean>("includeFileInfo") ?: false
         if (mimeType == null || uri == null || fields == null) {
             result.error("getOverlayMetadata-args", "missing arguments", null)
             return
@@ -1032,6 +1034,9 @@ class MetadataFetchHandler(private val context: Context) : MethodCallHandler {
         val contentAddress = ContentAddress(mimeType = mimeType, uri = uri, path = path, pageId = null)
 
         val metadataMap = HashMap<String, Any>()
+        if (includeFileInfo) {
+            readFileInfo(metadataMap, mimeType, uri)
+        }
         if (fields.isEmpty() || isVideo(mimeType)) {
             result.success(metadataMap)
             return
@@ -1604,6 +1609,95 @@ class MetadataFetchHandler(private val context: Context) : MethodCallHandler {
         }
 
         return metadataMap
+    }
+
+    private fun readFileInfo(map: HashMap<String, Any>, mimeType: String, uri: Uri) {
+        if (!isVideo(mimeType)) return
+
+        var codecFound = false
+        try {
+            val extractor = MediaExtractor()
+            try {
+                extractor.setDataSource(context, uri, null)
+                for (i in 0 until extractor.trackCount) {
+                    val format = extractor.getTrackFormat(i)
+                    val trackMime = format.getString(MediaFormat.KEY_MIME) ?: continue
+                    if (!trackMime.startsWith("video/")) continue
+
+                    // the MIME of a video track is the actual codec (e.g. `video/av01`, `video/hevc`),
+                    // unlike the overall MIME reported by `MediaMetadataRetriever`, which is often the container
+                    map["videoCodec"] = trackMime
+                    codecFound = true
+
+                    runCatching { format.getInteger(MediaFormat.KEY_FRAME_RATE).toDouble() }
+                        .getOrNull()
+                        ?.takeIf { it > 0 }
+                        ?.let { map["frameRate"] = it }
+                    if (!map.containsKey("frameRate")) {
+                        runCatching { format.getFloat(MediaFormat.KEY_FRAME_RATE).toDouble() }
+                            .getOrNull()
+                            ?.takeIf { it > 0 }
+                            ?.let { map["frameRate"] = it }
+                    }
+                    runCatching { format.getInteger(MediaFormat.KEY_BIT_RATE) }
+                        .getOrNull()
+                        ?.takeIf { it > 0 }
+                        ?.let { map["bitRate"] = it }
+                    break
+                }
+            } finally {
+                extractor.release()
+            }
+        } catch (e: Exception) {
+            Log.w(LOG_TAG, "failed to read track info for uri=$uri", e)
+        }
+
+        // fall back to the retriever for the remaining values when the extractor could not provide them
+        if (!codecFound || map["frameRate"] == null || map["bitRate"] == null) {
+            try {
+                val retriever = MediaMetadataRetriever()
+                try {
+                    retriever.setDataSource(context, uri)
+
+                    if (!codecFound) {
+                        // only accept codec-like MIME types, as the overall MIME is usually the container
+                        val overallMime = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE)
+                        if (overallMime != null && isCodecMime(overallMime)) {
+                            map["videoCodec"] = overallMime
+                        }
+                    }
+
+                    if (map["frameRate"] == null) {
+                        var frameRate = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CAPTURE_FRAMERATE)?.toDoubleOrNull()
+                        if (frameRate == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            // many containers do not report the capture frame rate, fall back to frame count / duration
+                            val frameCount = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT)?.toLongOrNull()
+                            val durationMillis = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull()
+                            if (frameCount != null && frameCount > 0 && durationMillis != null && durationMillis > 0) {
+                                frameRate = frameCount * 1000.0 / durationMillis
+                            }
+                        }
+                        frameRate?.takeIf { it > 0 }?.let { map["frameRate"] = it }
+                    }
+
+                    if (map["bitRate"] == null) {
+                        retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)?.toLongOrNull()?.takeIf { it > 0 }?.let { map["bitRate"] = it }
+                    }
+                } finally {
+                    retriever.release()
+                }
+            } catch (e: Exception) {
+                Log.w(LOG_TAG, "failed to read file info for uri=$uri", e)
+            }
+        }
+    }
+
+
+    private fun isCodecMime(mime: String) = when (mime) {
+        "video/av01", "video/hevc", "video/h265", "video/avc", "video/h264",
+        "video/x-vnd.on2.vp9", "video/x-vnd.on2.vp8", "video/mp4v-es", "video/mpeg2",
+        "video/dolby-vision" -> true
+        else -> false
     }
 
     companion object {

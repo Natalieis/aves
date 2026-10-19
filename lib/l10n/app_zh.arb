@@ -414,7 +414,12 @@
     "settingsViewerShowMinimap": "显示小地图",
     "settingsViewerShowInformation": "显示信息",
     "settingsViewerShowInformationSubtitle": "显示标题、日期、位置等",
+    "settingsViewerShowPosition": "显示序号",
+    "settingsViewerShowTitle": "显示标题",
     "settingsViewerShowShootingDetails": "显示拍摄详情",
+    "settingsViewerShowFileInfo": "显示文件信息",
+    "settingsViewerShowFileInfoSubtitle": "以角标形式显示，关闭信息叠加层时也可显示",
+    "settingsViewerShowBitRate": "显示码率",
     "settingsViewerShowOverlayThumbnails": "显示缩略图",
     "settingsViewerEnableOverlayBlurEffect": "模糊特效",
     "settingsViewerSlideshowTile": "幻灯片",
@@ -460,6 +465,33 @@
     "settingsSaveSearchHistory": "保存搜索历史记录",
     "settingsEnableBin": "启用回收站",
     "settingsEnableBinSubtitle": "将删除项保留 30 天",
+    "settingsAnalysisSectionTitle": "媒体分析",
+    "settingsAutoAnalyze": "启动时分析媒体",
+    "settingsAutoAnalyzeSubtitle": "读取元数据并反查地名。关闭后，视频在首次打开时分析一次。",
+    "catalogImagesLabel": "图片",
+    "catalogVideosLabel": "视频",
+    "catalogProgress": "已编目 {catalogued} / 共 {total}（{percent}%）",
+    "@catalogProgress": {
+      "placeholders": {
+        "catalogued": {
+          "type": "int",
+          "format": "decimalPattern"
+        },
+        "total": {
+          "type": "int",
+          "format": "decimalPattern"
+        },
+        "percent": {
+          "type": "int"
+        }
+      }
+    },
+    "settingsAutoCatalog": "启动时编目媒体",
+    "settingsAutoCatalogSubtitle": "在后台读取元数据（拍摄时间、旋转、方向等）。关闭可节省时间与电量，部分信息会缺失，直到你手动编目。",
+    "settingsAutoLocate": "启动时定位媒体",
+    "settingsAutoLocateSubtitle": "将 GPS 坐标解析为地名。关闭可节省时间、电量与流量。",
+    "settingsCatalogNow": "立即编目",
+    "settingsCatalogNowSubtitle": "仅本次执行编目，不会在每次启动时自动运行",
     "settingsHiddenItemsTile": "隐藏项",
     "settingsHiddenItemsPageTitle": "隐藏项",
     "settingsHiddenFiltersBanner": "匹配隐藏过滤器的照片和视频将不会出现在你的媒体集中",

@@ -1,13 +1,16 @@
 import 'package:aves/model/entry/entry.dart';
 import 'package:aves/model/entry/extensions/multipage.dart';
+import 'package:aves/model/entry/extensions/props.dart';
+import 'package:aves/model/metadata/overlay.dart';
 import 'package:aves/model/settings/settings.dart';
 import 'package:aves/model/viewer/view_state.dart';
+import 'package:aves/services/common/services.dart';
 import 'package:aves/theme/themes.dart';
-import 'package:aves/widgets/common/extensions/build_context.dart';
 import 'package:aves/widgets/common/fx/blurred.dart';
 import 'package:aves/widgets/common/fx/borders.dart';
 import 'package:aves/widgets/viewer/multipage/conductor.dart';
 import 'package:aves/widgets/viewer/overlay/top/details/details.dart';
+import 'package:aves/widgets/viewer/overlay/top/details/file.dart';
 import 'package:aves/widgets/viewer/overlay/top/histogram.dart';
 import 'package:aves/widgets/viewer/overlay/top/minimap.dart';
 import 'package:aves/widgets/viewer/page_entry_builder.dart';
@@ -79,6 +82,8 @@ class ViewerTopOverlay extends StatelessWidget {
         ];
 
         final endCornerChildren = [
+          if (settings.showOverlayFileInfo)
+            MediaInfoIndicator(entry: pageEntry),
           if (settings.overlayHistogramStyle != OverlayHistogramStyle.none)
             Selector<ViewStateConductor, ViewStateController>(
               selector: (context, vsc) => vsc.getOrCreateController(pageEntry!),
@@ -159,6 +164,92 @@ class ViewerTopOverlay extends StatelessWidget {
   }
 }
 
+class MediaInfoIndicator extends StatefulWidget {
+  final AvesEntry entry;
+
+  const new({
+    super.key,
+    required this.entry,
+  });
+
+  @override
+  State<MediaInfoIndicator> createState() => _MediaInfoIndicatorState();
+}
+
+class _MediaInfoIndicatorState extends State<MediaInfoIndicator> {
+  OverlayMetadata? _details;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  @override
+  void didUpdateWidget(covariant MediaInfoIndicator oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.entry.uri != widget.entry.uri) {
+      _details = null;
+      _load();
+    }
+  }
+
+  Future<void> _load() async {
+    final entry = widget.entry;
+    // only videos have a codec and a bit rate to report
+    if (!entry.isVideo) return;
+    final info = entry.catalogMetadata;
+    final needsCodec = info?.videoCodec == null;
+    final needsBitRate = settings.showOverlayBitRate && info?.videoBitRate == null;
+    // catalogued videos already carry this information in the database, do not read the file again
+    if (!needsCodec && !needsBitRate) return;
+
+    final uri = entry.uri;
+    final details = await metadataFetchService.getOverlayMetadata(entry, const <MetadataSyntheticField>{}, includeFileInfo: true);
+    if (!mounted || widget.entry.uri != uri) return;
+    setState(() => _details = details);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // size is available right away, codec and bit rate are filled in when the platform responds
+    final text = buildMediaInfoText(widget.entry, _details ?? const OverlayMetadata(), includeBitRate: settings.showOverlayBitRate);
+    if (text == null) return const SizedBox();
+
+    final blurred = settings.enableBlurEffect;
+    final border = AvesBorder.border(
+      context,
+      width: AvesBorder.curvedBorderWidth(context),
+    );
+    final borderRadius = BorderRadius.circular(4);
+
+    return IgnorePointer(
+      child: BlurredRRect(
+        enabled: blurred,
+        borderRadius: borderRadius,
+        child: Material(
+          type: MaterialType.button,
+          borderRadius: borderRadius,
+          color: Themes.overlayBackgroundColor(brightness: Theme.of(context).brightness, blurred: blurred),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            foregroundDecoration: BoxDecoration(
+              border: border,
+              borderRadius: borderRadius,
+            ),
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                shadows: ViewerDetailOverlayContent.shadows(context),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class ZoomLevelIndicator extends StatelessWidget {
   final ValueNotifier<ViewState> viewStateNotifier;
 
@@ -201,7 +292,7 @@ class ZoomLevelIndicator extends StatelessWidget {
                   borderRadius: borderRadius,
                 ),
                 child: Text(
-                  '$zoom${context.l10n.lengthUnitPercent}',
+                  '$zoom%',
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     shadows: ViewerDetailOverlayContent.shadows(context),
                   ),

@@ -567,7 +567,10 @@ class _AvesAppState extends State<AvesApp> with WidgetsBindingObserver {
       final shouldReset = _exitedMainByPop;
       _exitedMainByPop = false;
 
-      if (!shouldReset && (intentData ?? {}).values.nonNulls.isEmpty) {
+      // the platform always populates `debug` (usually `false`), even for a plain launcher intent,
+      // so it must not be treated as meaningful intent data, otherwise every relaunch would reset to the home page
+      final hasIntentData = (intentData ?? {}).entries.any((e) => e.key != IntentDataKeys.debug && e.value != null);
+      if (!shouldReset && !hasIntentData) {
         reportService.log('Relaunch');
         return;
       }

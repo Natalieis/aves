@@ -116,7 +116,7 @@ class _ViewerDetailOverlayState extends State<ViewerDetailOverlay> {
               MetadataSyntheticField.iso,
             },
             if (settings.showOverlayDescription) MetadataSyntheticField.description,
-          })
+          }, includeFileInfo: settings.showOverlayFileInfo)
           .then(_detailStreamController.add);
     }
     _unregisterEntry();
@@ -173,12 +173,16 @@ class const ViewerDetailOverlayContent({
     final collapsedShooting = twoColumns && showShootingDetails;
     final collapsedLocation = twoColumns && !showShootingDetails;
 
+    final showPosition = settings.showOverlayPosition;
+    final showTitle = settings.showOverlayTitle;
     final positionTitle = OverlayPositionTitleRow(
       entry: pageEntry,
       collectionPosition: position,
       multiPageController: multiPageController,
+      showPosition: showPosition,
+      showTitle: showTitle,
     );
-    final positionTitleIsNotEmpty = position != null || multiPageController != null || pageEntry.bestTitle != null;
+    final positionTitleIsNotEmpty = (showPosition && (position != null || multiPageController != null)) || (showTitle && pageEntry.bestTitle != null);
 
     final rows = <Widget>[];
     if (positionTitleIsNotEmpty) {
@@ -223,6 +227,7 @@ class const ViewerDetailOverlayContent({
     child: OverlayDateRow(
       entry: pageEntry,
       multiPageController: multiPageController,
+      frameRate: details.frameRate ?? pageEntry.videoFrameRate,
     ),
   );
 
@@ -273,6 +278,7 @@ class const ViewerDetailOverlayContent({
     visible: pageEntry.hasGps,
     builder: (context) => OverlayLocationRow(entry: pageEntry),
   );
+
 
   Widget _buildLocationSubRow(BuildContext context, double subRowWidth) => _buildSubRowSwitcher(
     context: context,

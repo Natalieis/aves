@@ -17,6 +17,7 @@ class AIcons {
   static const brightnessMin = Symbols.brightness_low;
   static const brightnessMax = Symbols.brightness_high;
   static const bugReport = Symbols.bug_report;
+  static const analysis = Symbols.analytics;
   static const checked = Symbols.done;
   static const circle = Symbols.fiber_manual_record;
   static const count = MdiIcons.counter;
@@ -74,6 +75,7 @@ class AIcons {
   static const volumeMax = Symbols.volume_up;
   static const width = Symbols.fit_page_width;
   static const zoomLevel = Symbols.loupe;
+  static const bitRate = Symbols.speed;
 
   // time/space
   static const date = Symbols.calendar_today;

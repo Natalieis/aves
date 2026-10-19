@@ -384,7 +384,11 @@ class Settings
           case SettingKeys.showOverlayInfoKey:
           case SettingKeys.showOverlayDescriptionKey:
           case SettingKeys.showOverlayRatingTagsKey:
+          case SettingKeys.showOverlayPositionKey:
+          case SettingKeys.showOverlayTitleKey:
           case SettingKeys.showOverlayShootingDetailsKey:
+          case SettingKeys.showOverlayFileInfoKey:
+          case SettingKeys.showOverlayBitRateKey:
           case SettingKeys.showOverlayThumbnailPreviewKey:
           case SettingKeys.viewerGestureSideTapNextKey:
           case SettingKeys.viewerUseCutoutKey:

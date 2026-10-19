@@ -21,6 +21,7 @@ class SettingKeys {
   // app
   static const hasAcceptedTermsKey = 'has_accepted_terms';
   static const canUseAnalysisServiceKey = 'can_use_analysis_service';
+  static const autoAnalyzeKey = 'auto_analyze';
   static const isInstalledAppAccessAllowedKey = 'is_installed_app_access_allowed';
   static const isErrorReportingAllowedKey = 'is_crashlytics_enabled';
   static const autoExportPathKey = 'auto_export_path';
@@ -114,7 +115,11 @@ class SettingKeys {
   static const showOverlayInfoKey = 'show_overlay_info';
   static const showOverlayDescriptionKey = 'show_overlay_description';
   static const showOverlayRatingTagsKey = 'show_overlay_rating_tags';
+  static const showOverlayPositionKey = 'show_overlay_position';
+  static const showOverlayTitleKey = 'show_overlay_title';
   static const showOverlayShootingDetailsKey = 'show_overlay_shooting_details';
+  static const showOverlayFileInfoKey = 'show_overlay_file_info';
+  static const showOverlayBitRateKey = 'show_overlay_bit_rate';
   static const showOverlayThumbnailPreviewKey = 'show_overlay_thumbnail_preview';
   static const viewerGestureSideTapNextKey = 'viewer_gesture_side_tap_next';
   static const viewerUseCutoutKey = 'viewer_use_cutout';

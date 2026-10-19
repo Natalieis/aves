@@ -9,23 +9,28 @@ class OverlayPositionTitleRow extends StatelessWidget {
   final AvesEntry entry;
   final String? collectionPosition;
   final MultiPageController? multiPageController;
+  final bool showPosition;
+  final bool showTitle;
 
   const new({
     super.key,
     required this.entry,
     required this.collectionPosition,
     required this.multiPageController,
+    required this.showPosition,
+    required this.showTitle,
   });
 
   @override
   Widget build(BuildContext context) {
-    final _title = entry.bestTitle;
+    // avoid computing the title when it is not displayed
+    final title = showTitle ? entry.bestTitle : null;
 
     Text toText({String? pagePosition}) => Text(
       [
-        if (collectionPosition != null) collectionPosition,
-        ?pagePosition,
-        if (_title != null) '${Unicode.FSI}$_title${Unicode.PDI}',
+        if (showPosition && collectionPosition != null) collectionPosition,
+        if (showPosition && pagePosition != null) pagePosition,
+        if (title != null) '${Unicode.FSI}$title${Unicode.PDI}',
       ].join(AText.separator),
     );
 

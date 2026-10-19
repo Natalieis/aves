@@ -17,6 +17,9 @@ class SettingsDefaults {
   // app
   static const hasAcceptedTerms = false;
   static const canUseAnalysisService = true;
+  // cataloguing is time and power consuming, so it is opt-in
+  static const autoAnalyze = false;
+  // reverse geocoding is time and network consuming, so it is opt-in
   static const isInstalledAppAccessAllowed = false;
   static const isErrorReportingAllowed = false;
   static const calendar = ACalendar.gregorian;
@@ -92,7 +95,11 @@ class SettingsDefaults {
   static const showOverlayInfo = true;
   static const showOverlayDescription = false;
   static const showOverlayRatingTags = false;
+  static const showOverlayPosition = false;
+  static const showOverlayTitle = true;
   static const showOverlayShootingDetails = false;
+  static const showOverlayFileInfo = true;
+  static const showOverlayBitRate = false;
   static const showOverlayThumbnailPreview = false;
   static const viewerGestureSideTapNext = false;
   static const viewerUseCutout = true;

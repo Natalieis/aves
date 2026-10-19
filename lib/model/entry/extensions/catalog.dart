@@ -12,6 +12,8 @@ import 'package:aves/services/metadata/svg_metadata_service.dart';
 
 extension ExtraAvesEntryCatalog on AvesEntry {
   Future<void> catalog({required bool background, required bool force, required bool persist}) async {
+    // cataloguing is a one-off: a missing frame rate must not make an entry look uncatalogued,
+    // otherwise it would be catalogued again on every start
     if (isCatalogued && !force) return;
 
     if (isSvg) {
@@ -62,6 +64,13 @@ extension ExtraAvesEntryCatalog on AvesEntry {
           };
           await applyNewFields(fields, persist: persist);
         }
+      }
+      if (isVideo && (videoFrameRate != null || videoCodec != null || videoBitRate != null)) {
+        catalogMetadata = catalogMetadata?.copyWith(
+          frameRate: videoFrameRate,
+          videoCodec: videoCodec,
+          videoBitRate: videoBitRate,
+        );
       }
       if (isGeotiff && !hasGps) {
         final info = await metadataFetchService.getGeoTiffInfo(this);

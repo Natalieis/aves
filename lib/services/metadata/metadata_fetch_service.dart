@@ -22,7 +22,7 @@ abstract class MetadataFetchService {
 
   Future<CatalogMetadata?> getCatalogMetadata(AvesEntry entry, {bool background = false});
 
-  Future<OverlayMetadata> getOverlayMetadata(AvesEntry entry, Set<MetadataSyntheticField> fields);
+  Future<OverlayMetadata> getOverlayMetadata(AvesEntry entry, Set<MetadataSyntheticField> fields, {bool includeFileInfo = false});
 
   Future<GeoTiffInfo?> getGeoTiffInfo(AvesEntry entry);
 
@@ -111,8 +111,8 @@ class PlatformMetadataFetchService implements MetadataFetchService {
   }
 
   @override
-  Future<OverlayMetadata> getOverlayMetadata(AvesEntry entry, Set<MetadataSyntheticField> fields) async {
-    if (fields.isNotEmpty && !entry.isSvg) {
+  Future<OverlayMetadata> getOverlayMetadata(AvesEntry entry, Set<MetadataSyntheticField> fields, {bool includeFileInfo = false}) async {
+    if ((fields.isNotEmpty || includeFileInfo) && !entry.isSvg) {
       try {
         // returns fields on demand, with various value types:
         // 'aperture' (double),
@@ -126,6 +126,7 @@ class PlatformMetadataFetchService implements MetadataFetchService {
           'path': entry.path,
           'sizeBytes': entry.sizeBytes,
           'fields': fields.map((v) => v.toPlatform).toList(),
+          'includeFileInfo': includeFileInfo,
         }) as Map;
         return OverlayMetadata.fromMap(result);
       } on PlatformException catch (e, stack) {

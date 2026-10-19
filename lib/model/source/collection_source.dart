@@ -521,6 +521,9 @@ abstract class CollectionSource with SourceBase, AlbumMixin, CountryMixin, Place
     final defaultAnalysisController = AnalysisController();
     final _analysisController = analysisController ?? defaultAnalysisController;
     final force = _analysisController.force;
+    // bulk cataloguing and reverse geocoding are opt-in, so that loading the
+    // library does not spend time and battery on metadata extraction
+    if (!force && !settings.autoAnalyze) return;
     if (!_analysisController.isStopping) {
       var startAnalysisService = false;
       if (_analysisController.canStartService && settings.canUseAnalysisService) {

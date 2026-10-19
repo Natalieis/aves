@@ -132,6 +132,8 @@ abstract class AvesColorsData {
   Color get xmp => fromHue(275);
 
   // settings
+  Color get analysis => fromHue(200);
+
   Color get accessibility => fromHue(134);
 
   Color get display => fromHue(50);

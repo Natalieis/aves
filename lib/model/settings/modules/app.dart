@@ -15,6 +15,10 @@ mixin AppSettings on SettingsAccess {
 
   set canUseAnalysisService(bool newValue) => set(SettingKeys.canUseAnalysisServiceKey, newValue);
 
+  bool get autoAnalyze => getBool(SettingKeys.autoAnalyzeKey) ?? SettingsDefaults.autoAnalyze;
+
+  set autoAnalyze(bool newValue) => set(SettingKeys.autoAnalyzeKey, newValue);
+
   bool get isInstalledAppAccessAllowed => getBool(SettingKeys.isInstalledAppAccessAllowedKey) ?? SettingsDefaults.isInstalledAppAccessAllowed;
 
   set isInstalledAppAccessAllowed(bool newValue) => set(SettingKeys.isInstalledAppAccessAllowedKey, newValue);

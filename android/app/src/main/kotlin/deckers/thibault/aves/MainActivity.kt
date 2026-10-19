@@ -22,6 +22,7 @@ import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
+import androidx.work.WorkManager
 import androidx.core.view.WindowInsetsCompat
 import app.loup.streams_channel.StreamsChannel
 import deckers.thibault.aves.channel.calls.AccessibilityHandler
@@ -107,6 +108,10 @@ open class MainActivity : FlutterFragmentActivity() {
 //        )
 
         super.onCreate(savedInstanceState)
+
+        // a leftover analysis task from a previous session would otherwise resume
+        // cataloguing on every launch, even when the automatic switches are off
+        WorkManager.getInstance(this).cancelUniqueWork("analysis_work")
 
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { view, windowInsets ->
             val insets = ViewCompat.onApplyWindowInsets(view, windowInsets)
@@ -368,7 +373,9 @@ open class MainActivity : FlutterFragmentActivity() {
                     INTENT_DATA_KEY_PAGE to intent.getStringExtra(EXTRA_KEY_PAGE),
                     INTENT_DATA_KEY_FILTERS to extractFiltersFromIntent(intent),
                     INTENT_DATA_KEY_EXPLORER_PATH to intent.getStringExtra(EXTRA_KEY_EXPLORER_PATH),
-                    INTENT_DATA_KEY_DEBUG to intent.getBooleanExtra(EXTRA_KEY_DEBUG, false),
+                    // only report debugging when actually requested,
+                    // so that a plain launcher intent carries no meaningful data
+                    INTENT_DATA_KEY_DEBUG to intent.getBooleanExtra(EXTRA_KEY_DEBUG, false).takeIf { it },
                 )
             }
 

@@ -278,6 +278,9 @@ class _CollectionGridContentState extends State<_CollectionGridContent> {
 
     final viewerCollection = collection.copyWith(
       listenToSource: false,
+      // reuse the entries already computed by the collection page,
+      // as recomputing them all on tap blocks the first frame and kills the hero transition
+      reuseComputedEntries: true,
     );
     final selection = context.read<Selection<AvesEntry>>();
     await Navigator.maybeOf(context)?.push(

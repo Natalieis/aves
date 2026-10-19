@@ -2,6 +2,7 @@ import 'package:aves/model/settings/settings.dart';
 import 'package:aves/theme/durations.dart';
 import 'package:aves/widgets/common/extensions/media_query.dart';
 import 'package:aves/widgets/settings/accessibility/accessibility.dart';
+import 'package:aves/widgets/settings/analysis/analysis.dart';
 import 'package:aves/widgets/settings/display/display.dart';
 import 'package:aves/widgets/settings/language/language.dart';
 import 'package:aves/widgets/settings/navigation/navigation.dart';
@@ -25,6 +26,7 @@ class SettingsPage extends StatelessWidget {
     ThumbnailsSection(),
     ViewerSection(),
     VideoSection(),
+    AnalysisSection(),
     PrivacySection(),
     AccessibilitySection(),
     DisplaySection(),

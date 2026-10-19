@@ -65,10 +65,17 @@ class CollectionLens with ChangeNotifier {
     this.allowStacks = true,
     this.fixedSort = false,
     this.fixedSelection,
+    // reuse an already computed snapshot instead of filtering/sorting everything again,
+    // for short-lived lenses that do not need to track the source (e.g. the viewer)
+    CollectionLens? copyEntriesFrom,
   }) : filters = (filters ?? {}).nonNulls.toSet() {
     if (kFlutterMemoryAllocationsEnabled) ChangeNotifier.maybeDispatchObjectCreation(this);
     _updateLayoutFactors();
     id ??= hashCode;
+    if (copyEntriesFrom != null) {
+      _adoptComputedState(copyEntriesFrom);
+      return;
+    }
     if (listenToSource) {
       final sourceEvents = source.eventBus;
       _subscriptions.add(sourceEvents.on<EntryAddedEvent>().listen((e) => _onEntryAdded(e.entries)));
@@ -121,13 +128,27 @@ class CollectionLens with ChangeNotifier {
     Set<CollectionFilter>? filters,
     bool? listenToSource,
     List<AvesEntry>? fixedSelection,
+    bool reuseComputedEntries = false,
   }) => CollectionLens(
     source: source ?? this.source,
     filters: filters ?? this.filters,
     id: id,
     listenToSource: listenToSource ?? this.listenToSource,
     fixedSelection: fixedSelection ?? this.fixedSelection,
+    copyEntriesFrom: reuseComputedEntries && (filters == null || setEquals(filters, this.filters)) ? this : null,
   );
+
+  void _adoptComputedState(CollectionLens other) {
+    tileLayout = other.tileLayout;
+    sortFactor = other.sortFactor;
+    sortReverse = other.sortReverse;
+    sectionFactor = other.sectionFactor;
+    calendar = other.calendar;
+    burstPatterns = List.of(other.burstPatterns);
+    _filteredSortedEntries = List.of(other._filteredSortedEntries);
+    _sectionedEntries = other._sectionedEntries != null ? List.of(other._sectionedEntries!) : null;
+    sections = Map.unmodifiable(other.sections);
+  }
 
   void _disposeSyntheticEntries() {
     _syntheticEntries.forEach((v) => v.dispose());

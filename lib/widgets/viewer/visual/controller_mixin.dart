@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:aves/app_mode.dart';
 import 'package:aves/model/device.dart';
 import 'package:aves/model/entry/entry.dart';
+import 'package:aves/model/entry/extensions/catalog.dart';
 import 'package:aves/model/entry/extensions/multipage.dart';
 import 'package:aves/model/entry/extensions/props.dart';
 import 'package:aves/model/settings/settings.dart';
@@ -130,6 +131,21 @@ mixin EntryViewControllerMixin<T extends StatefulWidget> on State<T> {
   }
 
   Future<void> _initVideoController(AvesEntry entry) async {
+    // when automatic cataloguing is disabled, video metadata (duration, rotation, size, ...) may be missing,
+    // which can leave the player stuck on its first frame with no controls;
+    // cataloguing this single entry on demand is cheap, and restores the state the player expects
+    if (!entry.isCatalogued) {
+      try {
+        await entry.catalog(background: false, force: false, persist: true);
+        final catalogMetadata = entry.catalogMetadata;
+        if (catalogMetadata != null) {
+          await localMediaDb.updateCatalogMetadata(entry.id, catalogMetadata);
+        }
+      } catch (error, stack) {
+        await reportService.recordError(error, stack);
+      }
+    }
+
     final controller = await context.read<VideoConductor>().getOrCreateController(entry);
     setState(() {});
 

@@ -11,11 +11,13 @@ import 'package:material_ui/material_ui.dart';
 class OverlayDateRow extends StatelessWidget {
   final AvesEntry entry;
   final MultiPageController? multiPageController;
+  final double? frameRate;
 
   const new({
     super.key,
     required this.entry,
     required this.multiPageController,
+    this.frameRate,
   });
 
   @override
@@ -30,6 +32,10 @@ class OverlayDateRow extends StatelessWidget {
         : entry.isSized
         ? entry.getResolutionText(locale)
         : '';
+    final mediaText = [
+      if (resolutionText.isNotEmpty) resolutionText,
+      if (frameRate != null && frameRate! > 0) _formatFrameRate(frameRate!),
+    ].join(' · ');
 
     return Row(
       children: [
@@ -40,8 +46,19 @@ class OverlayDateRow extends StatelessWidget {
         ),
         const SizedBox(width: ViewerDetailOverlayContent.iconPadding),
         Expanded(flex: 3, child: Text(dateText)),
-        Expanded(flex: 2, child: Text(resolutionText)),
+        Expanded(flex: 2, child: Text(mediaText)),
       ],
     );
+  }
+
+  /// Drops the decimal part only when it is actually zero,
+  /// so that `60.0` reads `60` while `29.97` is left untouched.
+  static String _formatFrameRate(double value) {
+    var text = value.toStringAsFixed(2);
+    if (text.contains('.')) {
+      text = text.replaceFirst(RegExp(r'0+$'), '');
+      text = text.replaceFirst(RegExp(r'\.$'), '');
+    }
+    return text;
   }
 }

@@ -9,6 +9,8 @@ plugins {
 }
 
 val packageName = "deckers.thibault.aves"
+// dedicated application ID, so that this build can be installed alongside the official one
+val customApplicationIdSuffix = ".nocatalog"
 
 // Keys
 
@@ -60,7 +62,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = packageName
+        applicationId = packageName + customApplicationIdSuffix
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -86,6 +88,14 @@ android {
                 storeFile = file(storeFilePath)
                 storePassword = keystoreProperties["storePassword"] as String
             }
+        }
+    }
+
+    // some dependencies (e.g. media_kit) ship prebuilt native libraries for several ABIs in JARs,
+    // which `abiFilters` alone does not exclude from the APK
+    packaging {
+        jniLibs {
+            excludes += listOf("lib/armeabi-v7a/**", "lib/x86/**", "lib/x86_64/**")
         }
     }
 
@@ -149,8 +159,8 @@ android {
             }
             if (useNdkAbiFilters) {
                 ndk {
-                    //noinspection ChromeOsAbiSupport
-                    abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
+                    // this build only targets 64-bit ARM devices
+                    abiFilters += listOf("arm64-v8a")
                 }
             }
         }
@@ -165,7 +175,8 @@ android {
         applicationVariants.all {
             println("Application variant applicationId=$applicationId name=$name")
 
-            resValue("string", "screen_saver_settings_activity", "${applicationId}/${packageName}.ScreenSaverSettingsActivity")
+            // activity name is resolved against the namespace, not the application ID
+            resValue("string", "screen_saver_settings_activity", "${packageName}/${packageName}.ScreenSaverSettingsActivity")
             resValue("string", "search_provider", "${applicationId}.search_provider")
 
             outputs.forEach { output ->

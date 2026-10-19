@@ -58,6 +58,10 @@ class LocalMediaDbUpgrader {
           await _upgradeFrom15(db);
         case 16:
           await _upgradeFrom16(db);
+        case 17:
+          await _upgradeFrom17(db);
+        case 18:
+          await _upgradeFrom18(db);
       }
       oldVersion++;
     }
@@ -71,6 +75,12 @@ class LocalMediaDbUpgrader {
         await SqfliteLocalMediaDbSchema.createTable(db, table);
       }
     });
+
+    // self-heal columns introduced by later versions,
+    // in case an upgrade was interrupted or skipped
+    await _ensureColumn(db, metadataTable, 'frameRate', 'REAL');
+    await _ensureColumn(db, metadataTable, 'videoCodec', 'TEXT');
+    await _ensureColumn(db, metadataTable, 'videoBitRate', 'INTEGER');
 
     // remove rows referencing future entry IDs
     final maxIdRows = await db.rawQuery('SELECT MAX(id) AS maxId FROM $entryTable');
@@ -595,5 +605,26 @@ class LocalMediaDbUpgrader {
 
     await db.execute('ALTER TABLE $dateTakenTable ADD COLUMN timeZoneOffsetMinutes INTEGER;');
     await db.execute('ALTER TABLE $metadataTable ADD COLUMN timeZoneOffsetMinutes INTEGER;');
+  }
+
+  static Future<void> _upgradeFrom17(Database db) async {
+    debugPrint('upgrading DB from v17');
+
+    await db.execute('ALTER TABLE $metadataTable ADD COLUMN frameRate REAL;');
+  }
+
+  static Future<void> _upgradeFrom18(Database db) async {
+    debugPrint('upgrading DB from v18');
+
+    await _ensureColumn(db, metadataTable, 'videoCodec', 'TEXT');
+    await _ensureColumn(db, metadataTable, 'videoBitRate', 'INTEGER');
+  }
+
+  static Future<void> _ensureColumn(Database db, String table, String column, String type) async {
+    final columns = await db.rawQuery('PRAGMA table_info($table)');
+    final exists = columns.any((row) => row['name'] == column);
+    if (!exists) {
+      await db.execute('ALTER TABLE $table ADD COLUMN $column $type;');
+    }
   }
 }

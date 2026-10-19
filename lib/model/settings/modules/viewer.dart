@@ -38,6 +38,22 @@ mixin ViewerSettings on SettingsAccess {
 
   set showOverlayShootingDetails(bool newValue) => set(SettingKeys.showOverlayShootingDetailsKey, newValue);
 
+  bool get showOverlayPosition => getBool(SettingKeys.showOverlayPositionKey) ?? SettingsDefaults.showOverlayPosition;
+
+  set showOverlayPosition(bool newValue) => set(SettingKeys.showOverlayPositionKey, newValue);
+
+  bool get showOverlayTitle => getBool(SettingKeys.showOverlayTitleKey) ?? SettingsDefaults.showOverlayTitle;
+
+  set showOverlayTitle(bool newValue) => set(SettingKeys.showOverlayTitleKey, newValue);
+
+  bool get showOverlayFileInfo => getBool(SettingKeys.showOverlayFileInfoKey) ?? SettingsDefaults.showOverlayFileInfo;
+
+  set showOverlayFileInfo(bool newValue) => set(SettingKeys.showOverlayFileInfoKey, newValue);
+
+  bool get showOverlayBitRate => getBool(SettingKeys.showOverlayBitRateKey) ?? SettingsDefaults.showOverlayBitRate;
+
+  set showOverlayBitRate(bool newValue) => set(SettingKeys.showOverlayBitRateKey, newValue);
+
   bool get showOverlayThumbnailPreview => getBool(SettingKeys.showOverlayThumbnailPreviewKey) ?? SettingsDefaults.showOverlayThumbnailPreview;
 
   set showOverlayThumbnailPreview(bool newValue) => set(SettingKeys.showOverlayThumbnailPreviewKey, newValue);

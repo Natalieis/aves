@@ -31,6 +31,11 @@ class AvesEntry with AvesEntryBase {
   @override
   int? sizeBytes;
 
+  // video track info read during cataloguing, kept in memory for the viewer overlay
+  double? videoFrameRate;
+  String? videoCodec;
+  int? videoBitRate;
+
   String? _path, _fileName, _extension, _sourceTitle;
   EntryDir? _directory;
   int? contentId;
@@ -376,6 +381,9 @@ class AvesEntry with AvesEntryBase {
 
     setCatalogDate(newMetadata?.dateMillis, newMetadata?.timeZoneOffsetMinutes);
     _catalogMetadata = newMetadata;
+    videoFrameRate = newMetadata?.frameRate ?? videoFrameRate;
+    videoCodec = newMetadata?.videoCodec ?? videoCodec;
+    videoBitRate = newMetadata?.videoBitRate ?? videoBitRate;
     _bestTitle = null;
     _tags = null;
     metadataChangeNotifier.notify();

@@ -70,6 +70,14 @@ class VideoMetadataFormatter {
           fields[EntryFields.rotationDegrees] = rotationDegrees;
         }
       }
+
+      // keep the video track info in memory, so that the viewer overlay can show it
+      final frameRate = parseFrameRate(mediaInfo);
+      if (frameRate != null) {
+        entry.videoFrameRate = frameRate;
+      }
+      entry.videoCodec = parseCodecName(mediaInfo) ?? entry.videoCodec;
+      entry.videoBitRate = parseBitRate(mediaInfo) ?? entry.videoBitRate;
     }
 
     final durationMicros = mediaInfo[Keys.durationMicros];
@@ -82,6 +90,33 @@ class VideoMetadataFormatter {
       }
     }
     return fields;
+  }
+
+  /// Extracts the video frame rate from the streams reported by the metadata fetcher.
+  static double? parseFrameRate(Map mediaInfo) {
+    final fps = _videoStream(mediaInfo)?[Keys.fps];
+    final frameRate = fps is num ? fps.toDouble() : double.tryParse('$fps');
+    return frameRate != null && frameRate > 0 ? frameRate : null;
+  }
+
+  /// Codec short name as reported by ffmpeg, e.g. `av1`, `hevc`, `h264`.
+  static String? parseCodecName(Map mediaInfo) {
+    final codec = _videoStream(mediaInfo)?[Keys.codecName];
+    return codec is String && codec.isNotEmpty ? codec : null;
+  }
+
+  /// Bit rate of the video track, when the container reports it.
+  static int? parseBitRate(Map mediaInfo) {
+    final stream = _videoStream(mediaInfo);
+    final bitRate = stream?[Keys.bitrate] ?? stream?[Keys.bps];
+    final value = bitRate is num ? bitRate.toInt() : int.tryParse('$bitRate');
+    return value != null && value > 0 ? value : null;
+  }
+
+  static Map? _videoStream(Map mediaInfo) {
+    final streams = mediaInfo[Keys.streams];
+    if (streams is! List) return null;
+    return streams.whereType<Map>().firstWhereOrNull((stream) => stream[Keys.streamType] == MediaStreamTypes.video);
   }
 
   // fetch date and animated status

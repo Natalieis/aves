@@ -16,7 +16,11 @@ class ViewerOverlayPage extends StatelessWidget {
   static const List<String> settingKeys = [
     SettingKeys.showOverlayOnOpeningKey,
     SettingKeys.showOverlayInfoKey,
+    SettingKeys.showOverlayPositionKey,
+    SettingKeys.showOverlayTitleKey,
     SettingKeys.showOverlayShootingDetailsKey,
+    SettingKeys.showOverlayFileInfoKey,
+    SettingKeys.showOverlayBitRateKey,
     SettingKeys.showOverlayRatingTagsKey,
     SettingKeys.showOverlayDescriptionKey,
     SettingKeys.showOverlayZoomLevelKey,
@@ -64,6 +68,28 @@ class ViewerOverlayPage extends StatelessWidget {
               selector: (context, s) => s.showOverlayInfo,
               builder: (context, showInfo, child) {
                 return SettingsSwitchListTile(
+                  selector: (context, s) => s.showOverlayPosition,
+                  onChanged: showInfo ? (v) => settings.showOverlayPosition = v : null,
+                  title: (_) => l10n.settingsViewerShowPosition,
+                  trailing: _trailingIcon(context, AIcons.count),
+                );
+              },
+            ),
+            Selector<Settings, bool>(
+              selector: (context, s) => s.showOverlayInfo,
+              builder: (context, showInfo, child) {
+                return SettingsSwitchListTile(
+                  selector: (context, s) => s.showOverlayTitle,
+                  onChanged: showInfo ? (v) => settings.showOverlayTitle = v : null,
+                  title: (_) => l10n.settingsViewerShowTitle,
+                  trailing: _trailingIcon(context, AIcons.description),
+                );
+              },
+            ),
+            Selector<Settings, bool>(
+              selector: (context, s) => s.showOverlayInfo,
+              builder: (context, showInfo, child) {
+                return SettingsSwitchListTile(
                   selector: (context, s) => s.showOverlayShootingDetails,
                   onChanged: showInfo ? (v) => settings.showOverlayShootingDetails = v : null,
                   title: (_) => l10n.settingsViewerShowShootingDetails,
@@ -100,6 +126,23 @@ class ViewerOverlayPage extends StatelessWidget {
                 onChanged: (v) => settings.showOverlayZoomLevel = v,
                 title: (_) => l10n.settingsViewerShowZoomLevel,
                 trailing: _trailingIcon(context, AIcons.zoomLevel),
+              ),
+              SettingsSwitchListTile(
+                selector: (context, s) => s.showOverlayFileInfo,
+                onChanged: (v) => settings.showOverlayFileInfo = v,
+                title: (_) => l10n.settingsViewerShowFileInfo,
+                trailing: _trailingIcon(context, AIcons.info),
+              ),
+              Selector<Settings, bool>(
+                selector: (context, s) => s.showOverlayFileInfo,
+                builder: (context, showFileInfo, child) {
+                  return SettingsSwitchListTile(
+                    selector: (context, s) => s.showOverlayBitRate,
+                    onChanged: showFileInfo ? (v) => settings.showOverlayBitRate = v : null,
+                    title: (_) => l10n.settingsViewerShowBitRate,
+                    trailing: _trailingIcon(context, AIcons.bitRate),
+                  );
+                },
               ),
               SettingsSwitchListTile(
                 selector: (context, s) => s.showOverlayMinimap,
