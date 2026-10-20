@@ -398,6 +398,8 @@
     "settingsCollectionSelectionQuickActionEditorBanner": "按住并拖拽可移动按钮并选择选择项目时显示的操作",
     "settingsViewerSectionTitle": "查看器",
     "settingsViewerGestureSideTapNext": "轻触屏幕边缘显示上/下一个项目",
+    "settingsViewerSideTapArea": "边缘触发区域",
+    "settingsViewerSideTapAreaAuto": "自动（竖屏 16.7% / 横屏 12.5%）",
     "settingsViewerUseCutout": "使用刘海/挖孔区域",
     "settingsViewerMaximumBrightness": "最大亮度",
     "settingsMotionPhotoAutoPlay": "自动播放动态照片",

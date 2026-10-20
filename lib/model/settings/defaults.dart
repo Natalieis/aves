@@ -4,6 +4,7 @@ import 'package:aves/model/filters/filters.dart';
 import 'package:aves/model/filters/mime.dart';
 import 'package:aves/model/filters/recent.dart';
 import 'package:aves/model/naming_pattern.dart';
+import 'package:aves/model/settings/enums/side_tap_area.dart';
 import 'package:aves/ref/mime_types.dart';
 import 'package:aves/widgets/collection/collection_page.dart';
 import 'package:aves/widgets/explorer/explorer_page.dart';
@@ -102,6 +103,7 @@ class SettingsDefaults {
   static const showOverlayBitRate = false;
   static const showOverlayThumbnailPreview = false;
   static const viewerGestureSideTapNext = false;
+  static const viewerSideTapArea = SideTapArea.auto;
   static const viewerUseCutout = true;
   static const enableMotionPhotoAutoPlay = false;
 

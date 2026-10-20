@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:aves/model/settings/enums/side_tap_area.dart';
 import 'package:aves/model/settings/settings.dart';
 import 'package:aves/services/common/services.dart';
 import 'package:aves/theme/colors.dart';
@@ -7,6 +8,7 @@ import 'package:aves/theme/icons.dart';
 import 'package:aves/widgets/common/extensions/build_context.dart';
 import 'package:aves/widgets/settings/common/tile_leading.dart';
 import 'package:aves/widgets/settings/common/tiles/sub_page.dart';
+import 'package:aves/widgets/settings/common/tiles/single_selection.dart';
 import 'package:aves/widgets/settings/common/tiles/switch_list.dart';
 import 'package:aves/widgets/settings/settings_definition.dart';
 import 'package:aves/widgets/settings/viewer/entry_background.dart';
@@ -38,6 +40,7 @@ class ViewerSection extends SettingsSection {
       SettingsTileViewerOverlay(),
       SettingsTileViewerSlideshow(),
       if (!settings.useTvLayout) SettingsTileViewerGestureSideTapNext(),
+      if (!settings.useTvLayout) SettingsTileViewerSideTapArea(),
       if (!settings.useTvLayout && isCutoutAware) SettingsTileViewerUseCutout(),
       SettingsTileViewerMotionPhotoAutoPlay(),
       SettingsTileViewerImageBackground(),
@@ -102,6 +105,29 @@ class SettingsTileViewerGestureSideTapNext extends SettingsTile {
     selector: (context, s) => s.viewerGestureSideTapNext,
     onChanged: (v) => settings.viewerGestureSideTapNext = v,
     title: title,
+  );
+}
+
+class SettingsTileViewerSideTapArea extends SettingsTile {
+  @override
+  List<String> get settingKeys => [SettingKeys.viewerSideTapAreaKey];
+
+  @override
+  String title(BuildContext context) => context.l10n.settingsViewerSideTapArea;
+
+  @override
+  Widget build(BuildContext context) => SettingsSelectionListTile<SideTapArea>(
+    values: SideTapArea.values,
+    getName: (context, v) => switch (v) {
+      .auto => context.l10n.settingsViewerSideTapAreaAuto,
+      .ten => '10%',
+      .fifteen => '15%',
+      .twenty => '20%',
+      .thirty => '30%',
+    },
+    selector: (context, s) => s.viewerSideTapArea,
+    onSelection: (v) => settings.viewerSideTapArea = v,
+    tileTitle: (_) => context.l10n.settingsViewerSideTapArea,
   );
 }
 
