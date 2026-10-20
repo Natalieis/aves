@@ -391,7 +391,7 @@ class Settings
           case SettingKeys.showOverlayBitRateKey:
           case SettingKeys.showOverlayThumbnailPreviewKey:
           case SettingKeys.viewerGestureSideTapNextKey:
-          case SettingKeys.viewerSideTapAreaKey:
+          case SettingKeys.viewerSideTapAreaPercentKey:
           case SettingKeys.viewerUseCutoutKey:
           case SettingKeys.enableMotionPhotoAutoPlayKey:
           case SettingKeys.videoGestureDoubleTapTogglePlayKey:

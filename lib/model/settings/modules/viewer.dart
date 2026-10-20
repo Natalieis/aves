@@ -1,5 +1,4 @@
 import 'package:aves/model/settings/defaults.dart';
-import 'package:aves/model/settings/enums/side_tap_area.dart';
 import 'package:aves_model/aves_model.dart';
 
 mixin ViewerSettings on SettingsAccess {
@@ -63,9 +62,9 @@ mixin ViewerSettings on SettingsAccess {
 
   set viewerGestureSideTapNext(bool newValue) => set(SettingKeys.viewerGestureSideTapNextKey, newValue);
 
-  SideTapArea get viewerSideTapArea => getEnumOrDefault(SettingKeys.viewerSideTapAreaKey, SettingsDefaults.viewerSideTapArea, SideTapArea.values);
+  int get viewerSideTapAreaPercent => getInt(SettingKeys.viewerSideTapAreaPercentKey) ?? SettingsDefaults.viewerSideTapAreaPercent;
 
-  set viewerSideTapArea(SideTapArea newValue) => set(SettingKeys.viewerSideTapAreaKey, newValue.name);
+  set viewerSideTapAreaPercent(int newValue) => set(SettingKeys.viewerSideTapAreaPercentKey, newValue.clamp(0, 30));
 
   bool get viewerUseCutout => getBool(SettingKeys.viewerUseCutoutKey) ?? SettingsDefaults.viewerUseCutout;
 

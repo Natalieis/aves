@@ -122,7 +122,7 @@ class SettingKeys {
   static const showOverlayBitRateKey = 'show_overlay_bit_rate';
   static const showOverlayThumbnailPreviewKey = 'show_overlay_thumbnail_preview';
   static const viewerGestureSideTapNextKey = 'viewer_gesture_side_tap_next';
-  static const viewerSideTapAreaKey = 'viewer_side_tap_area';
+  static const viewerSideTapAreaPercentKey = 'viewer_side_tap_area_percent';
   static const viewerUseCutoutKey = 'viewer_use_cutout';
   static const enableMotionPhotoAutoPlayKey = 'motion_photo_auto_play';
   static const imageBackgroundKey = 'image_background';

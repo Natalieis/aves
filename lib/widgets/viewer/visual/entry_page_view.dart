@@ -4,7 +4,6 @@ import 'package:aves/app_mode.dart';
 import 'package:aves/model/entry/entry.dart';
 import 'package:aves/model/entry/extensions/props.dart';
 import 'package:aves/model/settings/enums/widget_outline.dart';
-import 'package:aves/model/settings/enums/side_tap_area.dart';
 import 'package:aves/model/settings/settings.dart';
 import 'package:aves/model/viewer/view_state.dart';
 import 'package:aves/services/common/services.dart';
@@ -540,7 +539,10 @@ class _EntryPageViewState extends State<EntryPageView> with TickerProviderStateM
 
   double? _getSideRatio() {
     if (!mounted) return null;
-    return settings.viewerSideTapArea.ratio(portrait: context.isPortrait);
+    final percent = settings.viewerSideTapAreaPercent;
+    // 0 means automatic, which keeps the historical values
+    if (percent <= 0) return context.isPortrait ? 1 / 6 : 1 / 8;
+    return percent / 100;
   }
 
   static ScaleState _vectorScaleStateCycle(ScaleState actual) {

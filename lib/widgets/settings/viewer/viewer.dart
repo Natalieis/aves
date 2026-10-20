@@ -1,14 +1,13 @@
 import 'dart:async';
 
-import 'package:aves/model/settings/enums/side_tap_area.dart';
 import 'package:aves/model/settings/settings.dart';
 import 'package:aves/services/common/services.dart';
 import 'package:aves/theme/colors.dart';
 import 'package:aves/theme/icons.dart';
+import 'package:aves/widgets/common/basic/list_tiles/slider.dart';
 import 'package:aves/widgets/common/extensions/build_context.dart';
 import 'package:aves/widgets/settings/common/tile_leading.dart';
 import 'package:aves/widgets/settings/common/tiles/sub_page.dart';
-import 'package:aves/widgets/settings/common/tiles/single_selection.dart';
 import 'package:aves/widgets/settings/common/tiles/switch_list.dart';
 import 'package:aves/widgets/settings/settings_definition.dart';
 import 'package:aves/widgets/settings/viewer/entry_background.dart';
@@ -110,24 +109,24 @@ class SettingsTileViewerGestureSideTapNext extends SettingsTile {
 
 class SettingsTileViewerSideTapArea extends SettingsTile {
   @override
-  List<String> get settingKeys => [SettingKeys.viewerSideTapAreaKey];
+  List<String> get settingKeys => [SettingKeys.viewerSideTapAreaPercentKey];
 
   @override
   String title(BuildContext context) => context.l10n.settingsViewerSideTapArea;
 
   @override
-  Widget build(BuildContext context) => SettingsSelectionListTile<SideTapArea>(
-    values: SideTapArea.values,
-    getName: (context, v) => switch (v) {
-      .auto => context.l10n.settingsViewerSideTapAreaAuto,
-      .ten => '10%',
-      .fifteen => '15%',
-      .twenty => '20%',
-      .thirty => '30%',
-    },
-    selector: (context, s) => s.viewerSideTapArea,
-    onSelection: (v) => settings.viewerSideTapArea = v,
-    tileTitle: (_) => context.l10n.settingsViewerSideTapArea,
+  Widget build(BuildContext context) => Selector<Settings, int>(
+    selector: (context, s) => s.viewerSideTapAreaPercent,
+    builder: (context, percent, child) => SliderListTile(
+      title: (_) => context.l10n.settingsViewerSideTapArea,
+      // 0 keeps the automatic ratio, 1 to 30 is a fixed percentage
+      value: percent.toDouble(),
+      min: 0,
+      max: 30,
+      divisions: 30,
+      onChanged: (v) => settings.viewerSideTapAreaPercent = v.round(),
+      titleTrailing: (context, v) => Text(v <= 0 ? context.l10n.settingsViewerSideTapAreaAuto : '${v.round()}%'),
+    ),
   );
 }
 
